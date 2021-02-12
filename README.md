@@ -8,4 +8,5 @@ This is an analysis using a harmonized dataset of three national (UK, US, Canada
 
 ## Feb 11
 - Create github repo - **done**
+- Updated introduction and abstract and highlighted discussion points - **done**
 - Trend analysis - to do
