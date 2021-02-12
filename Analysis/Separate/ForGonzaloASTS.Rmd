@@ -1,0 +1,354 @@
+---
+title: "HCC: US vs. UK"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10, fig.height = 12, results="asis")
+```
+
+```{r}
+library(ggplot2)
+library(survminer)
+library(survival)
+library(dplyr)
+library(tidyverse)
+#library(data.table) 
+library(forestmodel) 
+#library(Hmisc) 
+library(sjPlot) 
+library(stargazer) 
+library(sjmisc) 
+library(arsenal) 
+library(gtsummary)
+library(expss) 
+library(lubridate)
+library(ggsignif)
+library(ggsci)
+library(Greg) #to use timesplitter
+library(magrittr)
+scipen=999
+```
+
+**Read in data**
+```{r}
+bound2 <- read_csv("/Users/Ivanics/Desktop/bound3.csv", guess_max = 300000)
+```
+
+
+```{r}
+bound2 <- bound2 %>% filter(TX_YR >= 2010 & COUNTRY == "US")
+
+bound2 <- bound2 %>%
+  mutate(PSURV_years = PSURV/365.25) %>%
+  mutate(GSURV_years = GSURV/365.25)
+
+bound2$MILAN <- factor(bound2$MILAN, ordered = FALSE)
+bound2$MILAN <- relevel(bound2$MILAN, ref="Milan")
+bound2$TUMOR_NUMBER <- factor(bound2$TUMOR_NUMBER, ordered = FALSE)
+bound2$TUMOR_NUMBER <- relevel(bound2$TUMOR_NUMBER, ref="Single")
+bound2$STRAT_AFP <- factor(bound2$STRAT_AFP, ordered = FALSE)
+bound2$STRAT_AFP <- factor(bound2$STRAT_AFP, levels = c("AFP 0-20", "AFP 21-400", "AFP >400"))
+bound2$STRAT_AFP <- relevel(bound2$STRAT_AFP, ref="AFP 0-20")
+bound2$COUNTRY <- factor(bound2$COUNTRY, ordered = FALSE)
+bound2$COUNTRY <- relevel(bound2$COUNTRY, ref="US")
+bound2$RVENT <- factor(bound2$RVENT, ordered = FALSE)
+bound2$RVENT <- relevel(bound2$RVENT, ref = "Not ventilated")
+bound2$RETHNIC <- factor(bound2$RETHNIC, ordered = FALSE)
+bound2$RETHNIC <- relevel(bound2$RETHNIC, ref = "White")
+bound2$HCC_combined <- factor(bound2$HCC_combined, ordered = FALSE)
+bound2$HCC_combined <- relevel(bound2$HCC_combined, ref = "Other")
+bound2$DCMV <- factor(bound2$DCMV, ordered = FALSE)
+bound2$DCMV <- relevel(bound2$DCMV, ref = "Negative")
+bound2$DONCOD <- factor(bound2$DONCOD, ordered = FALSE)
+bound2$DONCOD <- relevel(bound2$DONCOD, ref = "Cerebral Anoxia")
+```
+
+**Recoding graft survival**
+```{r}
+bound2 <- bound2 %>% mutate(
+  GCENSnew = case_when(
+    PCENS == 1 & PSURV_years <= GSURV_years ~ 1,
+    TRUE ~ 0
+  )
+)
+
+bound2 <- bound2 %>% mutate(
+  GSURV_yearsnew = case_when(
+    PCENS == 1 & PSURV_years <= GSURV_years ~ PSURV_years,
+    TRUE ~ GSURV_years
+  )
+)
+```
+
+**Recoding patient survival**
+```{r}
+#1year PSURV
+bound2 <- bound2 %>% mutate(PSURV_1year =
+    case_when(
+      PSURV_years >= 1.0000001 ~ 1,
+      PSURV_years <= 1 ~ PSURV_years
+    ))
+
+#1-year PCENS
+bound2 <- bound2 %>% mutate(PCENS_1year =
+                              case_when(
+                                PSURV_years <= 1 ~ PCENS,
+                                PSURV_years > 1 ~ 0
+                              ))
+
+#3year PSURV
+bound2 <- bound2 %>% mutate(PSURV_3year =
+    case_when(
+      PSURV_years >= 3.000001 ~ 3,
+      PSURV_years <= 3 ~ PSURV_years
+    ))
+
+#3-year PCENS
+bound2 <- bound2 %>% mutate(PCENS_3year =
+                              case_when(
+                                PSURV_years <= 3 ~ PCENS,
+                                PSURV_years > 3 ~ 0
+                              ))
+
+#5year PSURV
+bound2 <- bound2 %>% mutate(PSURV_5year =
+    case_when(
+      PSURV_years >= 5.000001 ~ 5,
+      PSURV_years <= 5 ~ PSURV_years
+    ))
+
+#5-year PCENS
+bound2 <- bound2 %>% mutate(PCENS_5year =
+                              case_when(
+                                PSURV_years <= 5 ~ PCENS,
+                                PSURV_years > 5 ~ 0
+                              ))
+
+```
+
+**Crosstabulating** 
+```{r}
+ftable(xtabs(cbind(PCENS,GCENS)~ COUNTRY, data=bound2))
+ftable(xtabs(cbind(PCENS,GCENSnew)~ COUNTRY, data=bound2))
+```
+
+```{r}
+#for gonzalo
+tab1 <- tableby( ~
+              CIT+
+              DAGE+
+              DBMI+
+              DTYPE+
+              DSEX+
+              GRAFT_TYPE+
+              DTYPE+
+              DCMV+
+              DONCOD,
+                data=bound2, test=TRUE, total=TRUE, 
+                numeric.stats=c("medianq1q3"), numeric.test="kwt", cat.test="chisq")
+summary(tab1, title='Donor characteristics', pfootnote=TRUE, digits = 2)
+```
+
+
+```{r}
+#for gonzalo
+tab1 <- tableby( ~ 
+              RSEX+
+              RETHNIC+
+              MELD+
+              RREN_SUP+
+              RAGE+
+              RLIFE+
+              RVENT+
+              WAITLIST_TIME+
+              TX_YR+
+              BMI+
+              RAB_SURGERY+
+              RCREAT+
+              RBILIRUBIN+
+              RALBUMIN+
+              RINR+
+              RANTI_HCV+
+              RBG+
+              RASCITES+
+              RENCEPH+ 
+              BLD_GP_MATCH,
+                data=bound2, test=TRUE, total=TRUE, 
+                numeric.stats=c("medianq1q3"), numeric.test="kwt", cat.test="chisq")
+summary(tab1, title='Recipient characteristics', pfootnote=TRUE, digits = 2)
+```
+
+```{r}
+bound2subset <- bound2 %>% filter(COUNTRY == "US" | COUNTRY == "UK")
+bound2subset$COUNTRY <- factor(bound2subset$COUNTRY, ordered=FALSE)
+bound2subset$COUNTRY <- relevel(bound2subset$COUNTRY, ref="US")
+
+#forgonalo
+tab1 <- tableby(COUNTRY ~ 
+              MILAN+
+              MAX_TUMOR+
+              TOTAL_DIAMETER+
+              STRAT_AFP+
+              TUMOR_NUMBER+
+              TUMORNUM+
+              AJCC,
+                data=bound2subset, test=TRUE, total=TRUE, 
+                numeric.stats=c("medianq1q3"), numeric.test="kwt", cat.test="chisq")
+summary(tab1, title='Tumor characteristics on waitlist', pfootnote=TRUE, digits = 2)
+```
+
+```{r}
+#for gonzalo
+tab1 <- tableby( ~ 
+              HCC_combined,
+                data=bound2, test=TRUE, total=TRUE, 
+                numeric.stats=c("medianq1q3"), numeric.test="kwt", cat.test="chisq")
+summary(tab1, title='Liver disease associated with HCC', pfootnote=TRUE, digits = 2)
+```
+
+**Summaries for survival**
+```{r}
+#for gonzalo
+summary(tableby( ~ Surv(PSURV_years, PCENS), data=bound2, times=1:10, surv.stats=c("NeventsSurv", "NriskSurv")))
+
+summary(tableby( ~ Surv(PSURV_1year, PCENS_1year), data=bound2, times=1:1, surv.stats=c("NeventsSurv", "NriskSurv")))
+
+summary(tableby( ~ Surv(PSURV_3year, PCENS_3year), data=bound2, times=1:3, surv.stats=c("NeventsSurv", "NriskSurv")))
+
+summary(tableby( ~ Surv(PSURV_5year, PCENS_5year), data=bound2, times=1:5, surv.stats=c("NeventsSurv", "NriskSurv")))
+
+
+```
+**OS**
+```{r}
+fit1 <- survfit(Surv(PSURV_years, PCENS) ~ 1, data = bound2)
+
+ggsurv1 <- ggsurvplot(
+           fit1,               
+           data = bound2,          
+           risk.table = TRUE,     
+           #pval = TRUE,          
+           conf.int = F,         
+           xlim = c(0,5),         
+           xlab = "Years from LT",
+           palette = "npg",
+           break.time.by = 1,  
+           title = "Overall patient survival after liver transplantation for HCC in the US 5-year",
+      # subtitle = "with 95% confidence intervals",
+               ggtheme = theme_test(base_size=20, base_family = "Helvetica"),
+         # risk.table.y.text.col = F,
+         risk.table.height = 0.15,
+        #  risk.table.y.text = T,
+        #  surv.median.line = "hv", 
+           legend.title= "",
+      legend = "none"
+         # legend.labs =
+         #  c("United States", "Canada", "United Kingdom")
+        )
+ggsurv1
+```
+
+
+```{r}
+t1 <- coxph(formula= Surv(PSURV, PCENS)~ 
+              bound2$CIT+
+              bound2$RSEX+
+              bound2$RETHNIC+
+              bound2$MELD+
+              bound2$RREN_SUP+
+              bound2$DAGE+
+              bound2$DBMI+
+              bound2$RAGE+
+              bound2$MILAN+
+              bound2$MAX_TUMOR+
+              bound2$TUMOR_NUMBER+
+              bound2$RLIFE+
+              bound2$RVENT+
+              bound2$WAITLIST_TIME+
+              bound2$DTYPE+
+              bound2$DSEX+
+              bound2$GRAFT_TYPE+
+              bound2$STRAT_AFP,
+data=bound2) %>%
+  tbl_regression(exponentiate = TRUE)
+t1
+
+```
+
+**Forest model patient survival**
+```{r}
+#for gonzalo
+cox1 <- coxph(formula= Surv(PSURV_years,PCENS)~
+              bound2$CIT+
+              bound2$RSEX+
+              bound2$RETHNIC+
+              bound2$MELD+
+              bound2$RREN_SUP+
+              bound2$DAGE+
+              bound2$DBMI+
+              bound2$RAGE+
+              bound2$WAITLIST_TIME+
+              bound2$DTYPE+
+              bound2$DSEX+
+              bound2$GRAFT_TYPE,
+        data=bound2)
+forest_model(cox1) 
+```
+
+
+**sensitivity analysis with tumor variables UK vs. US**
+```{r}
+#for gonzalo
+cox1 <- coxph(formula= Surv(PSURV_years,PCENS)~
+              bound2subset$CIT+
+              bound2subset$RSEX+
+              bound2subset$RETHNIC+
+              bound2subset$MELD+
+              bound2subset$RREN_SUP+
+              bound2subset$DAGE+
+              bound2subset$DBMI+
+              bound2subset$RAGE+
+              bound2subset$WAITLIST_TIME+
+              bound2subset$DTYPE+
+              bound2subset$DSEX+
+              bound2subset$GRAFT_TYPE+
+              bound2subset$MILAN +
+              bound2subset$TUMOR_NUMBER +
+              bound2subset$MAX_TUMOR +
+              bound2subset$STRAT_AFP,
+        data=bound2subset)
+forest_model(cox1) 
+```
+
+
+
+**KM for OS with HCC **
+```{r}
+fit3 <- survfit(Surv(PSURV_years, PCENS) ~ HCC_combined, data = bound2)
+
+ggsurv3 <- ggsurvplot(
+           fit3,               
+           data = bound2,          
+           risk.table = TRUE,     
+           pval = TRUE,          
+           conf.int = F,         
+           xlim = c(0,5),         
+           xlab = "Years from LT",
+           palette = "npg",
+           break.time.by = 1,
+       title = "Overall patient survival after liver transplantation stratified by associated liver disease",
+               ggtheme = theme_test(base_size=20, base_family = "Helvetica"),
+         # risk.table.y.text.col = F,
+         risk.table.height = 0.2,
+        #  risk.table.y.text = T,
+        #  surv.median.line = "hv", 
+           legend.title= "",
+          legend.labs =
+           c("Other", "AID-associated", "ALD-associated", "HBV-associated", "HCV-associated", "MET-associated", "PBC-associated", "PSC-associated")
+        )
+ggsurv3
+```
+
