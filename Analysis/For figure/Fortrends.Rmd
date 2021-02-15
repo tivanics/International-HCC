@@ -154,11 +154,11 @@ ggp <- ggplot(NULL, aes(TX_YR, countYEAR)) +    # Draw ggplot2 plot based on two
             col = "antiquewhite2",
             mapping = aes(fill = "Total")) +
 
-  geom_area(fill = "#b491c8", 
+  geom_area(fill = "#a11616", 
             alpha = 0.5, 
             data = HCC_country_year, 
             mapping = aes(fill = "HCC"),
-            col = "#b491c8") +
+            col = "#a11616") +
 
   facet_grid(COUNTRY~., scales="free_y") +
   scale_x_continuous(limits = c(2008, 2018), 
