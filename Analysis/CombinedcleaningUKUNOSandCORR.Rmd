@@ -154,7 +154,7 @@ unosdata <- unosdata %>% rename(DBMI = BMI_DON_CALC)
 
 #Donor sex
 unosdata$DSEX <- 
-  recode(unosdata$GENDER,
+  recode(unosdata$GENDER_DON,
                                c("F"~0,
                                  "M"~1
                                  ))
@@ -2443,7 +2443,7 @@ corrdata$DBMI <- as.numeric(corrdata$DBMI)
 
 #Donor sex
 corrdata$DSEX <- 
-  recode(corrdata$SEX_CODE,
+  recode(corrdata$SEX_CODE_donor,
                                c(1~1,
                                  0~0
                                  ))
@@ -3027,7 +3027,7 @@ corrdata <- corrdata %>% mutate(COD_other = factor(COD_other, labels = c("Other 
 ```{r}
 #uhndata <- read_csv2("/Users/Ivanics/Desktop/Research/92. UK vs US vs CAN/Data/UHN data/AI_file_merged_with_UHN_HCC_LT_masterfile_Jan3.csv", guess_max = 300000)
 
-uhndata <- read_csv2("/Users/Ivanics/Desktop/Research/92. UK vs US vs CAN/Data/UHN data/UHN_HCC_LT_masterfile_merged_with_AI_file_Jan3.csv", guess_max = 300000)
+uhndata <- read_csv2("/Users/Ivanics/Desktop/Research/92. UK vs US vs CAN -- on git/Data/UHN data/UHN_HCC_LT_masterfile_merged_with_AI_file_Jan3.csv", guess_max = 300000)
 
 ```
 
@@ -3036,7 +3036,9 @@ uhndata <- read_csv2("/Users/Ivanics/Desktop/Research/92. UK vs US vs CAN/Data/U
 uhndata <- uhndata %>% 
   rename(REGID=subject_id)
 
-uhndata$TX_YEAR <- substring(uhndata$list1_delist_date, 1, 4)
+uhndata %>% select(list1_date, delisting_date, Delisting_date) %>% View()
+
+#uhndata$TX_YEAR <- substring(uhndata$list1_delist_date, 1, 4)
 uhndata$TX_YEAR <- substring(uhndata$Delisting_date, 1, 4)
 uhndata$TX_YEAR <- as.numeric(uhndata$TX_YEAR)
 
@@ -3169,7 +3171,7 @@ uhndata <- uhndata %>% mutate(
   RSEX = factor(RSEX, labels = c("Female", "Male"))
 )
 
-uhndata <- uhndata %>% mutate(RAGE = AGE)
+#uhndata <- uhndata %>% mutate(RAGE = RAGE)
 
 #Ethnicity
 uhndata <- uhndata %>% mutate(
@@ -3180,12 +3182,13 @@ uhndata <- uhndata %>% mutate(
   )
 )
 
+
 uhndata <- uhndata %>% mutate(
   RETHNIC = factor(RETHNIC, labels = c("White", "Black", "Other"))
 )
   
 #Waiting list
-uhndata$DAYSWAIT_CHRON <- difftime(uhndata$list1_delist_date, uhndata$list1_date, units = c("days"))
+#uhndata$DAYSWAIT_CHRON <- difftime(uhndata$list1_delist_date, uhndata$list1_date, units = c("days"))
 uhndata$DAYSWAIT_CHRON <- difftime(uhndata$Delisting_date, uhndata$list1_date, units = c("days"))
 
 uhndata <- uhndata %>% rename(
