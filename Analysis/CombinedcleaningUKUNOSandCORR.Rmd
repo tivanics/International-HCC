@@ -1295,7 +1295,8 @@ ukfull$RREN_SUP <- recode(
                           8 ~ NA,
                           9 ~ NA,
                           3 ~ 0,
-                          2 ~ 1
+                          2 ~ 1,
+                          1 ~ 1
                           )
 ukfull <- ukfull %>% 
   mutate(RREN_SUP = factor(RREN_SUP, labels = c("No pre-tx support", "Pre-tx support")))
