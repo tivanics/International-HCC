@@ -26,7 +26,7 @@ library(expss)
 library(lubridate)
 library(ggsignif)
 library(haven)
-option(scipen=999)
+options(scipen=999)
 ```
 
 **Read in data**
@@ -349,9 +349,10 @@ unosdata <- unosdata %>% rename(
 )
 
 #Creatinine
-unosdata <- unosdata %>% rename(
-  RCREAT = CREAT_TX
-)
+unosdata <- unosdata %>% mutate(RCREAT = case_when(
+  RREN_SUP == "Pre-tx support" ~ 4,
+  TRUE ~ CREAT_TX 
+))
 
 unosdata <- unosdata %>% mutate(
   COUNTRY = case_when(
@@ -1421,6 +1422,11 @@ ukfull$RCREAT <- recode(ukfull$RCREAT,
 ukfull <- ukfull %>%
   mutate(RCREAT = RCREAT*0.0113)
 
+ukfull <- ukfull %>% mutate(RCREAT = case_when(
+  RREN_SUP == "Pre-tx support" ~ 4,
+  TRUE ~ RCREAT
+))
+
 ```
 
 **Recipient disease etiology **
@@ -2329,7 +2335,7 @@ ukformerge <- ukfull %>% select(REGID, TX_YR, RAGE, GSURV, GCENS, PSURV, PCENS, 
 ukformergeNASH <- ukfullNASH %>% select(REGID, TX_YR, RAGE, GSURV, GCENS, PSURV, PCENS, LC, DAGE, DTYPE, DONCOD, DBMI, DSEX, DCMV, BLD_GP_MATCH, GRAFT_TYPE, CIT, RSEX, RETHNIC, BMI, WAITLIST_TIME, MELD, RREN_SUP, RVENT, RAB_SURGERY, RLIFE, RASCITES, RENCEPH, RBG, RANTI_HCV, RALBUMIN, RINR, RBILIRUBIN, RCREAT, COUNTRY, HCC_combined, UKT_PLDGRP, COD_cardiovascular, COD_malignancy, COD_infection, COD_liverrelated, COD_other)
 
 #Feb 12
-ukformerge <- ukfull %>% select(REGID, TX_YR, RAGE, GSURV, GCENS, PSURV, PCENS, LC, DAGE, DTYPE, DONCOD, DBMI, DSEX, DCMV, BLD_GP_MATCH, GRAFT_TYPE, CIT, RSEX, RETHNIC, BMI, WAITLIST_TIME, TRANSPLANT_UNIT, MELD, RREN_SUP, RVENT, RAB_SURGERY, RLIFE, RASCITES, RENCEPH, RBG, RANTI_HCV, RALBUMIN, RINR, RBILIRUBIN, RCREAT, COUNTRY, HCC_combined, UKT_PLDGRP, COD_cardiovascular, COD_malignancy, COD_infection, COD_liverrelated, COD_other, NASH, ALF, HCV, PSC, HBV, PBC, ALD, AID, MET, OTH, HCC)
+#ukformerge <- ukfull %>% select(REGID, TX_YR, RAGE, GSURV, GCENS, PSURV, PCENS, LC, DAGE, DTYPE, DONCOD, DBMI, DSEX, DCMV, BLD_GP_MATCH, GRAFT_TYPE, CIT, RSEX, RETHNIC, BMI, WAITLIST_TIME, TRANSPLANT_UNIT, MELD, RREN_SUP, RVENT, RAB_SURGERY, RLIFE, RASCITES, RENCEPH, RBG, RANTI_HCV, RALBUMIN, RINR, RBILIRUBIN, RCREAT, COUNTRY, HCC_combined, UKT_PLDGRP, COD_cardiovascular, COD_malignancy, COD_infection, COD_liverrelated, COD_other, NASH, ALF, HCV, PSC, HBV, PBC, ALD, AID, MET, OTH, HCC)
 ```
 
 **Canadian data**
@@ -2617,6 +2623,11 @@ corrdata$RCREAT <- as.numeric(corrdata$RCREAT)
 #Convert umol/l to mg/dl
 corrdata <- corrdata %>%
   mutate(RCREAT = RCREAT*0.0113)
+
+corrdata <- corrdata %>% mutate(RCREAT = case_when(
+  RREN_SUP == "Pre-tx support" ~ 4,
+  TRUE ~ RCREAT
+))
 
 #Country code
 corrdata <- corrdata %>% mutate(
@@ -3037,7 +3048,7 @@ uhndata <- read_csv2("/Users/Ivanics/Desktop/Research/92. UK vs US vs CAN -- on 
 uhndata <- uhndata %>% 
   rename(REGID=subject_id)
 
-uhndata %>% select(list1_date, delisting_date, Delisting_date) %>% View()
+
 
 #uhndata$TX_YEAR <- substring(uhndata$list1_delist_date, 1, 4)
 uhndata$TX_YEAR <- substring(uhndata$Delisting_date, 1, 4)
@@ -3288,6 +3299,14 @@ uhndata <- uhndata %>% mutate(
   RCREAT = tx1_cr
 )
 
+uhndata <- uhndata %>%
+  mutate(RCREAT = RCREAT*0.0113)
+
+uhndata <- uhndata %>% mutate(RCREAT = case_when(
+  RREN_SUP == "Pre-tx support" ~ 4,
+  TRUE ~ RCREAT
+))
+
 uhndata <- uhndata %>% mutate(
   COUNTRY = case_when(
     PCENS >= 0 ~ "UHN"
@@ -3528,7 +3547,7 @@ corrdataformerge <- corrdata %>% filter(HCC==1) %>% select(REGID, TX_YR, RAGE, G
 corrdataformergeNASH <- corrdata %>% filter(NASH==1) %>% select(REGID, TX_YR, RAGE, GSURV, GCENS, PSURV, PCENS, DAGE, DTYPE, HCC, DONCOD, DBMI, DCMV, DSEX, GRAFT_TYPE, CIT, RSEX, RETHNIC, BMI, WAITLIST_TIME, MELD, RREN_SUP, RBG, RANTI_HCV, RINR, RBILIRUBIN, RCREAT, COUNTRY, UKT_PLDGRP, COD_cardiovascular, COD_malignancy, COD_infection, COD_liverrelated, COD_other)
 
 #Feb 12
-corrdataformerge <- corrdata %>% select(REGID, TX_YR, RAGE, GSURV, GCENS, PSURV, PCENS, DAGE, DTYPE, DONCOD, DBMI, DCMV, DSEX, GRAFT_TYPE, CIT, RSEX, RETHNIC, BMI, WAITLIST_TIME, MELD, RREN_SUP, RBG, RANTI_HCV, RINR, RBILIRUBIN, RCREAT, COUNTRY, HCC_combined, UKT_PLDGRP, NASH, COD_cardiovascular, COD_malignancy, COD_infection, COD_liverrelated, COD_other, UHN, NASH, ALF, HCV, PSC, HBV, PBC, ALD, AID, MET, OTH, HCC)
+#corrdataformerge <- corrdata %>% select(REGID, TX_YR, RAGE, GSURV, GCENS, PSURV, PCENS, DAGE, DTYPE, DONCOD, DBMI, DCMV, DSEX, GRAFT_TYPE, CIT, RSEX, RETHNIC, BMI, WAITLIST_TIME, MELD, RREN_SUP, RBG, RANTI_HCV, RINR, RBILIRUBIN, RCREAT, COUNTRY, HCC_combined, UKT_PLDGRP, NASH, COD_cardiovascular, COD_malignancy, COD_infection, COD_liverrelated, COD_other, UHN, NASH, ALF, HCV, PSC, HBV, PBC, ALD, AID, MET, OTH, HCC)
 ```
 
 ```{r}
@@ -3566,5 +3585,4 @@ bound5hccwithall <- bind_rows(unosformerge2, ukformerge, corrdataformerge)
 write_csv(bound4, path = "/Users/Ivanics/Desktop/bound4.csv")
 write_csv(bound5hccwithall, path = "/Users/Ivanics/Desktop/GitHub/International-HCC/Data/bound5hccwithall.csv")
 #write_csv(boundnash, path = "/Users/Ivanics/Desktop/boundnash.csv")
-
 ```
