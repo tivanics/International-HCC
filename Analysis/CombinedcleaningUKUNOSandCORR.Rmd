@@ -394,6 +394,21 @@ unosdata <- unosdata %>% mutate(
   )
   )
 
+unosdata <- unosdata %>% mutate(
+  HCVfreetext2 = case_when(
+    grepl("[hH][cC][vV]|[hH][eE][pP][aA][tT][iI][sS].[cC]|[hH][eE][pP].[cC]", DGN_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+  )
+
+unosdata <- unosdata %>% mutate(
+  HCVfreetext3 = case_when(
+    grepl("[hH][cC][vV]|[hH][eE][pP][aA][tT][iI][sS].[cC]|[hH][eE][pP].[cC]", DGN2_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+  )
+
+
 #PSC freetext
 unosdata <- unosdata %>% mutate(
   PSCfreetext = case_when(
@@ -402,10 +417,38 @@ unosdata <- unosdata %>% mutate(
   )
 )
 
+unosdata <- unosdata %>% mutate(
+  PSCfreetext2 = case_when(
+    grepl("[pP][sS][cC]|[pP][rR][iI][mM][aA][rR][yY].[sS][cC][lL][eE][rR][oO][sS][iI][nN][gG].[cC][hH][oO][lL][aA][nN][gG][iI][tT][iI][sS]|[pP][rR][iI][mM][aA][rR][yY].[sS][cC][lL][eE][rR][oO][sS][iI][nN][gG]", DGN_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
+unosdata <- unosdata %>% mutate(
+  PSCfreetext3 = case_when(
+    grepl("[pP][sS][cC]|[pP][rR][iI][mM][aA][rR][yY].[sS][cC][lL][eE][rR][oO][sS][iI][nN][gG].[cC][hH][oO][lL][aA][nN][gG][iI][tT][iI][sS]|[pP][rR][iI][mM][aA][rR][yY].[sS][cC][lL][eE][rR][oO][sS][iI][nN][gG]", DGN2_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
 #HBV freetext
 unosdata <- unosdata %>% mutate(
   HBVfreetext = case_when(
     grepl("[hH][bB][vV]|[hH][eE][pP][aA][tT][iI][tT][iI][sS].[bB]|[hH][eE][pP].[bB]|", DIAG_OSTXT) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
+unosdata <- unosdata %>% mutate(
+  HBVfreetext2 = case_when(
+    grepl("[hH][bB][vV]|[hH][eE][pP][aA][tT][iI][tT][iI][sS].[bB]|[hH][eE][pP].[bB]|", DGN_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
+unosdata <- unosdata %>% mutate(
+  HBVfreetext3 = case_when(
+    grepl("[hH][bB][vV]|[hH][eE][pP][aA][tT][iI][tT][iI][sS].[bB]|[hH][eE][pP].[bB]|", DGN2_OSTXT_TCR) == TRUE ~ 1,
     TRUE ~ 0
   )
 )
@@ -419,6 +462,21 @@ unosdata <- unosdata %>% mutate(
   )
 )
 
+unosdata <- unosdata %>% mutate(
+  PBCfreetext2 = case_when(
+    grepl("[pP][bB][cC]|[pP][rR][iI][mM][aA][rR][yY].[bB][iI][lL][iI][aA][rR][yY]", DGN_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
+
+unosdata <- unosdata %>% mutate(
+  PBCfreetext3 = case_when(
+    grepl("[pP][bB][cC]|[pP][rR][iI][mM][aA][rR][yY].[bB][iI][lL][iI][aA][rR][yY]", DGN2_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
 #ALD
 unosdata <-unosdata %>% mutate(
   ALDfreetext= case_when(
@@ -427,10 +485,38 @@ unosdata <-unosdata %>% mutate(
   )
 )
 
+unosdata <-unosdata %>% mutate(
+  ALDfreetext2= case_when(
+    grepl("[^aA][lL][dD][.]|[aA][lL][cC][oO][hH]|[aA][lL][cC][oO][hH][oO][lL][iI][cC]|[^aA][lL][cC][oO][hH][oO][lL][iI][cC].[lL][iI][vV][eE][rR].[dD][iI][sS][eE][aA][sS][eE]", DGN_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
+unosdata <-unosdata %>% mutate(
+  ALDfreetext3= case_when(
+    grepl("[^aA][lL][dD][.]|[aA][lL][cC][oO][hH]|[aA][lL][cC][oO][hH][oO][lL][iI][cC]|[^aA][lL][cC][oO][hH][oO][lL][iI][cC].[lL][iI][vV][eE][rR].[dD][iI][sS][eE][aA][sS][eE]", DGN2_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
 #AID
 unosdata <-unosdata %>% mutate(
   AIDfreetext= case_when(
     grepl("[aA][iI][hH]|[aA][uU][tT][oO][iI][mM][mM][uU][nN][eE]", DIAG_OSTXT) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
+unosdata <-unosdata %>% mutate(
+  AIDfreetext2= case_when(
+    grepl("[aA][iI][hH]|[aA][uU][tT][oO][iI][mM][mM][uU][nN][eE]", DGN_OSTXT_TCR) == TRUE ~ 1,
+    TRUE ~ 0
+  )
+)
+
+unosdata <-unosdata %>% mutate(
+  AIDfreetext3= case_when(
+    grepl("[aA][iI][hH]|[aA][uU][tT][oO][iI][mM][mM][uU][nN][eE]", DGN2_OSTXT_TCR) == TRUE ~ 1,
     TRUE ~ 0
   )
 )
@@ -499,10 +585,31 @@ unosdata <- unosdata %>% mutate(
     DIAG == 4105 ~ 1,
     DIAG == 4106 ~ 1,
     DIAG == 4107 ~ 1,
-    DIAG == 4106 ~ 1,
     DIAG == 4108 ~ 1,
     DIAG == 4100 ~ 1,
     DIAG == 4520 ~ 1,
+    DGN_TCR == 4110 ~ 1,
+    DGN_TCR == 4101 ~ 1,
+    DGN_TCR == 4102 ~ 1,
+    DGN_TCR == 4103 ~ 1,
+    DGN_TCR == 4104 ~ 1,
+    DGN_TCR == 4105 ~ 1,
+    DGN_TCR == 4106 ~ 1,
+    DGN_TCR == 4107 ~ 1,
+    DGN_TCR == 4108 ~ 1,
+    DGN_TCR == 4100 ~ 1,
+    DGN_TCR == 4520 ~ 1,
+    DGN2_TCR == 4110 ~ 1,
+    DGN2_TCR == 4101 ~ 1,
+    DGN2_TCR == 4102 ~ 1,
+    DGN2_TCR == 4103 ~ 1,
+    DGN2_TCR == 4104 ~ 1,
+    DGN2_TCR == 4105 ~ 1,
+    DGN2_TCR == 4106 ~ 1,
+    DGN2_TCR == 4107 ~ 1,
+    DGN2_TCR == 4108 ~ 1,
+    DGN2_TCR == 4100 ~ 1,
+    DGN2_TCR == 4520 ~ 1,
     TRUE ~ 0
   )
 )
@@ -515,6 +622,15 @@ unosdata <- unosdata %>% mutate(
     DIAG == 4202 ~ 1,
     DIAG == 4206 ~ 1,
     DIAG == 4216 ~ 1,
+    DGN_TCR == 4202 ~ 1,
+    DGN_TCR == 4206 ~ 1,
+    DGN_TCR == 4216 ~ 1,
+    DGN2_TCR == 4202 ~ 1,
+    DGN2_TCR == 4206 ~ 1,
+    DGN2_TCR == 4216 ~ 1,
+    HCVfreetext == 1 ~ 1,
+    HCVfreetext2 == 1 ~ 1,
+    HCVfreetext3 == 1 ~ 1,
     TRUE ~ 0
   )
 )
@@ -526,6 +642,17 @@ unosdata <- unosdata %>% mutate(
     DIAG == 4241 ~ 1,
     DIAG == 4242 ~ 1,
     DIAG == 4245 ~ 1,
+    DGN_TCR == 4240 ~ 1,
+    DGN_TCR == 4241 ~ 1,
+    DGN_TCR == 4242 ~ 1,
+    DGN_TCR == 4245 ~ 1,
+    DGN2_TCR == 4240 ~ 1,
+    DGN2_TCR == 4241 ~ 1,
+    DGN2_TCR == 4242 ~ 1,
+    DGN2_TCR == 4245 ~ 1,
+    PSCfreetext == 1 ~ 1,
+    PSCfreetext2 == 1 ~ 1,
+    PSCfreetext3 == 1 ~ 1,
     TRUE ~ 0
   )
 )
@@ -537,6 +664,15 @@ unosdata <- unosdata %>% mutate(
     DIAG == 4202 ~ 1,
     DIAG == 4207 ~ 1,
     DIAG == 4205 ~ 1,
+    DGN_TCR == 4202 ~ 1,
+    DGN_TCR == 4207 ~ 1,
+    DGN_TCR == 4205 ~ 1,
+    DGN2_TCR == 4202 ~ 1,
+    DGN2_TCR == 4207 ~ 1,
+    DGN2_TCR == 4205 ~ 1,
+    HBVfreetext == 1 ~ 1,
+    HBVfreetext2 == 1 ~ 1,
+    HBVfreetext3 == 1 ~ 1,
     TRUE ~ 0
   )
 )
@@ -545,6 +681,11 @@ unosdata <- unosdata %>% mutate(
 unosdata <- unosdata %>% mutate(
   PBC = case_when(
     DIAG == 4220 ~ 1,
+    DGN_TCR == 4220 ~ 1,
+    DGN2_TCR == 4220 ~ 1,
+    PBCfreetext == 1 ~ 1,
+    PBCfreetext2 == 1 ~ 1,
+    PBCfreetext3 == 1 ~ 1,
     TRUE ~ 0
   )
 )
@@ -554,6 +695,13 @@ unosdata <- unosdata %>% mutate(
   ALD = case_when(
     DIAG == 4215 ~ 1,
     DIAG == 4217 ~ 1,
+    DGN_TCR == 4215 ~ 1,
+    DGN_TCR == 4217 ~ 1,
+    DGN2_TCR == 4215 ~ 1,
+    DGN2_TCR == 4217 ~ 1,
+    ALDfreetext == 1 ~ 1,
+    ALDfreetext2 == 1 ~ 1,
+    ALDfreetext3 == 1 ~ 1,
     TRUE ~ 0
   )
 )
@@ -570,6 +718,23 @@ unosdata <- unosdata %>% mutate(
     DIAG == 4203 ~ 1,
     DIAG == 4208 ~ 1,
     DIAG == 4210 ~ 1,
+    DGN_TCR == 4212 ~ 1,
+    DGN_TCR == 4213 ~ 1,
+    DGN_TCR == 4200 ~ 1,
+    DGN_TCR == 4209 ~ 1,
+    DGN_TCR == 4203 ~ 1,
+    DGN_TCR == 4208 ~ 1,
+    DGN_TCR == 4210 ~ 1,
+    DGN2_TCR == 4212 ~ 1,
+    DGN2_TCR == 4213 ~ 1,
+    DGN2_TCR == 4200 ~ 1,
+    DGN2_TCR == 4209 ~ 1,
+    DGN2_TCR == 4203 ~ 1,
+    DGN2_TCR == 4208 ~ 1,
+    DGN2_TCR == 4210 ~ 1,
+    AIDfreetext == 1 ~ 1,
+    AIDfreetext2 == 1 ~ 1,
+    AIDfreetext3 == 1 ~ 1,
     TRUE ~ 0
   )
 )
@@ -590,6 +755,28 @@ unosdata <- unosdata %>% mutate(
     DIAG == 4308 ~ 1,
     DIAG == 4315 ~ 1,
     DIAG == 4214 ~ 1,
+    DGN_TCR == 4300 ~ 1,
+    DGN_TCR == 4301 ~ 1,
+    DGN_TCR == 4302 ~ 1,
+    DGN_TCR == 4303 ~ 1,
+    DGN_TCR == 4304 ~ 1,
+    DGN_TCR == 4305 ~ 1,
+    DGN_TCR == 4306 ~ 1,
+    DGN_TCR == 4307 ~ 1,
+    DGN_TCR == 4308 ~ 1,
+    DGN_TCR == 4315 ~ 1,
+    DGN_TCR == 4214 ~ 1,
+    DGN2_TCR == 4300 ~ 1,
+    DGN2_TCR == 4301 ~ 1,
+    DGN2_TCR == 4302 ~ 1,
+    DGN2_TCR == 4303 ~ 1,
+    DGN2_TCR == 4304 ~ 1,
+    DGN2_TCR == 4305 ~ 1,
+    DGN2_TCR == 4306 ~ 1,
+    DGN2_TCR == 4307 ~ 1,
+    DGN2_TCR == 4308 ~ 1,
+    DGN2_TCR == 4315 ~ 1,
+    DGN2_TCR == 4214 ~ 1,
     TRUE ~ 0
   )
 )
