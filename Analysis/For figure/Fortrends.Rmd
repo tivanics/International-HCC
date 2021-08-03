@@ -23,7 +23,7 @@ options(scipen=999)
 ```
 
 ```{r}
-bound3 <- read_csv(file = "/Users/Ivanics/Desktop/GitHub/International-HCC/Data/bound5hccwithall.csv")
+bound3 <- read_csv(file = "/Users/Ivanics/Desktop/GitHub/International-HCC/Data/bound5hccwithall.csv", guess_max = 100000)
 ```
 
 ```{r What i showed you before}
@@ -135,12 +135,17 @@ labeled_subset_total_transplants_country_year <- subset(total_transplants_countr
 US_labeled_subset_HCC_country_year <- filter(labeled_subset_HCC_country_year, COUNTRY == "US")
 US_labeled_subset_total_transplants_country_year <- filter(labeled_subset_total_transplants_country_year, COUNTRY=="US")
 
+US_labeled_subset_total_transplants_country_year <- US_labeled_subset_total_transplants_country_year[order(US_labeled_subset_total_transplants_country_year$TX_YR),]
+
 UK_labeled_subset_HCC_country_year <- filter(labeled_subset_HCC_country_year, COUNTRY == "UK")
 UK_labeled_subset_total_transplants_country_year <- filter(labeled_subset_total_transplants_country_year, COUNTRY=="UK")
+
+UK_labeled_subset_total_transplants_country_year <- UK_labeled_subset_total_transplants_country_year[order(UK_labeled_subset_total_transplants_country_year$TX_YR),]
 
 CAN_labeled_subset_HCC_country_year <- filter(labeled_subset_HCC_country_year, COUNTRY == "CAN")
 CAN_labeled_subset_total_transplants_country_year <- filter(labeled_subset_total_transplants_country_year, COUNTRY=="CAN")
 
+CAN_labeled_subset_total_transplants_country_year <- CAN_labeled_subset_total_transplants_country_year[order(CAN_labeled_subset_total_transplants_country_year$TX_YR),]
 
 
 ```
@@ -296,3 +301,6 @@ HCCUS <- (US_labeled_subset_HCC_country_year$countYEAR /
 x <- HCCUS
 cs.test(x)
 ```
+
+
+
