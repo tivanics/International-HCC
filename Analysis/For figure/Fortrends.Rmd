@@ -147,7 +147,9 @@ CAN_labeled_subset_total_transplants_country_year <- filter(labeled_subset_total
 
 CAN_labeled_subset_total_transplants_country_year <- CAN_labeled_subset_total_transplants_country_year[order(CAN_labeled_subset_total_transplants_country_year$TX_YR),]
 
+HCC_country_year <- HCC_country_year[order(HCC_country_year$TX_YR),]
 
+total_transplants_country_year <- total_transplants_country_year[order(total_transplants_country_year$TX_YR),]
 ```
 
 ``` {r gabi_ggplot_faceted}
@@ -164,23 +166,23 @@ ggp <- ggplot(NULL, aes(TX_YR, countYEAR)) +    # Draw ggplot2 plot based on two
             data = HCC_country_year, 
             mapping = aes(fill = "HCC"),
             col = "#a11616") +
-
-  facet_grid(COUNTRY~., scales="free_y") +
+facet_grid(fct_relevel(COUNTRY,'US','CAN','UK')~., scales="free_y") +
+  #facet_grid(COUNTRY~., scales="free_y") +
   scale_x_continuous(limits = c(2008, 2018), 
-                     breaks = c(2008, 2010, 2012, 2014, 2016, 2018))+
+                     breaks = c(2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018))+
   scale_y_continuous(expand = expansion(mult = c(0, 0))) +
   
  
   # label the proportion of LDLT done for that year; label only 
   # the years of the x-axis breaks (to save space, optional ofc)
   # customize nudge amount for each country factor
-  geom_text(data = US_labeled_subset_HCC_country_year, 
+geom_text(data = US_labeled_subset_HCC_country_year, 
              label = percent(US_labeled_subset_HCC_country_year$countYEAR /
                                US_labeled_subset_total_transplants_country_year$countYEAR, 
                              accuracy = 0.1),
             size = 3,
             vjust = 0,
-            nudge_y = 100,
+            nudge_y = 100,  
             col = "#28193D",
             fontface = "bold") +
   geom_text(data = UK_labeled_subset_HCC_country_year, 
@@ -250,56 +252,95 @@ labeled_subset_total_transplants_country_year <- subset(total_transplants_countr
 US_labeled_subset_HCC_country_year <- filter(labeled_subset_HCC_country_year, COUNTRY == "US")
 US_labeled_subset_total_transplants_country_year <- filter(labeled_subset_total_transplants_country_year, COUNTRY=="US")
 
+US_labeled_subset_HCC_country_year <- US_labeled_subset_HCC_country_year[order(US_labeled_subset_HCC_country_year$TX_YR),]
+
+US_labeled_subset_total_transplants_country_year <- US_labeled_subset_total_transplants_country_year[order(US_labeled_subset_total_transplants_country_year$TX_YR),]
+
 UK_labeled_subset_HCC_country_year <- filter(labeled_subset_HCC_country_year, COUNTRY == "UK")
 UK_labeled_subset_total_transplants_country_year <- filter(labeled_subset_total_transplants_country_year, COUNTRY=="UK")
 
+UK_labeled_subset_HCC_country_year <- UK_labeled_subset_HCC_country_year[order(UK_labeled_subset_HCC_country_year$TX_YR),]
+
+UK_labeled_subset_total_transplants_country_year <- UK_labeled_subset_total_transplants_country_year[order(UK_labeled_subset_total_transplants_country_year$TX_YR),]
+
 CAN_labeled_subset_HCC_country_year <- filter(labeled_subset_HCC_country_year, COUNTRY == "CAN")
 CAN_labeled_subset_total_transplants_country_year <- filter(labeled_subset_total_transplants_country_year, COUNTRY=="CAN")
+
+CAN_labeled_subset_HCC_country_year <- CAN_labeled_subset_HCC_country_year[order(CAN_labeled_subset_HCC_country_year$TX_YR),]
+
+CAN_labeled_subset_total_transplants_country_year <- CAN_labeled_subset_total_transplants_country_year[order(CAN_labeled_subset_total_transplants_country_year$TX_YR),]
 
 #Cox-stuart trend test Canada
 library(trend)
 Canada <- Trendsovertime %>% filter(COUNTRY == "CAN") %>% select(count, TX_YR)
 
 x <- Canada %>% distinct(TX_YR, .keep_all = T)  %>% arrange((TX_YR)) %>% as.data.frame()
+canprop <- (CAN_labeled_subset_HCC_country_year$countYEAR/ CAN_labeled_subset_total_transplants_country_year$countYEAR)
 x
 x <- x[, "count"]
 bartels.test(x)
 cs.test(x)
+bartels.test(canprop)
+cs.test(canprop)
 
 HCCCAN <- (CAN_labeled_subset_HCC_country_year$countYEAR /
                                CAN_labeled_subset_total_transplants_country_year$countYEAR)
 #Canada proportion
 x <- HCCCAN
 cs.test(x)
+bartels.test(x)
 
 #Cox-stuart trend test UK
 UK <- Trendsovertime %>% filter(COUNTRY == "UK") %>% select(count, TX_YR)
 
 x <- UK %>% distinct(TX_YR, .keep_all = T)  %>% arrange((TX_YR)) %>% as.data.frame()
+ukprop <- (UK_labeled_subset_HCC_country_year$countYEAR/ UK_labeled_subset_total_transplants_country_year$countYEAR)
 x
 x <- x[, "count"]
 bartels.test(x)
 cs.test(x)
+bartels.test(ukprop)
+cs.test(ukprop)
 
 HCCUK <- (UK_labeled_subset_HCC_country_year$countYEAR /
                                UK_labeled_subset_total_transplants_country_year$countYEAR)
 x <- HCCUK
 cs.test(x)
-
+bartels.test(x)
 #Cox-stuart trend test US
 US <- Trendsovertime %>% filter(COUNTRY == "US") %>% select(count, TX_YR)
 
 x <- US %>% distinct(TX_YR, .keep_all = T)  %>% arrange((TX_YR)) %>% as.data.frame()
+usprop <- (US_labeled_subset_HCC_country_year$countYEAR/ US_labeled_subset_total_transplants_country_year$countYEAR)
 x
 x <- x[, "count"]
 bartels.test(x)
 cs.test(x)
+bartels.test(usprop)
+cs.test(usprop)
+
 
 HCCUS <- (US_labeled_subset_HCC_country_year$countYEAR /
                                US_labeled_subset_total_transplants_country_year$countYEAR)
 
 x <- HCCUS
 cs.test(x)
+bartels.test(x)
+```
+
+
+```{r}
+x <- c(0.310, 0.317, 0.322, 0.347, 0.365, 0.368,0.368, 0.379, 0.315, 0.323, 0.315)
+cs.test(x)
+bartels.test(x)
+
+x <- c(0.225, 0.260, 0.205, 0.219, 0.229, 0.249, 0.319, 0.329, 0.344, 0.330, 0.324)
+  cs.test(x)
+bartels.test(x)
+
+x <- c(0.254, 0.272, 0.276, 0.270, 0.236, 0.254, 0.265, 0.250, 0.248, 0.224, 0.211)
+  cs.test(x)
+bartels.test(x)
 ```
 
 
